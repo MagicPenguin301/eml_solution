@@ -100,7 +100,7 @@ def check_downloadable(total_pages):
         }
 
 def main():
-    st.title("在线解压并处理ZIP文件")
+    st.title("在线批量浏览EML文件并导出笔记")
     uploaded_file = st.file_uploader("请选择要上传的ZIP文件", type=["zip"])
     if uploaded_file is not None:
         mail_dict,sorted_name_list = mail_dict_from_zip(uploaded_file)
