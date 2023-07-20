@@ -86,7 +86,7 @@ def check_downloadable(total_pages):
             st.dataframe(df)
             st.download_button(
                 label="点击下载CSV文件",
-                data=df.to_csv("ABCD_values.csv",index=False,encoding='utf-8'),
+                data=df.to_csv(index=False),
                 file_name="ABCD_values.csv",
                 mime="text/csv")
         if st.button("清除所有记录"):
