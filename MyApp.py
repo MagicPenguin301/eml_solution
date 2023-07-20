@@ -80,7 +80,7 @@ def render_page_btn(total_pages,key):
 
 def check_downloadable(total_pages):
     if True:
-        if st.button("点击下载目前的进度"):
+        if st.button("下载目前的进度"):
             # 将 ABCD 四个值保存到 CSV 文件中
             df = pd.DataFrame(st.session_state.result_dict)
             st.dataframe(df)
@@ -92,10 +92,11 @@ def check_downloadable(total_pages):
         if st.button("清除所有记录"):
             st.session_state.result_dict = {
             'File Name': [''] * total_pages,
-            'A': ['']*total_pages,
-            'B': ['']*total_pages,
-            'C': ['']*total_pages,
-            'D': ['']*total_pages
+            'Cases': ['']*total_pages,
+            'Goods': ['']*total_pages,
+            'Price': ['']*total_pages,
+            'Total': ['']*total_pages,
+            'Comments': ['']*total_pages,
         }
 
 def main():
@@ -109,10 +110,11 @@ def main():
         st.session_state.current_page = current_page
         null_dict = {
             'File Name':sorted_name_list,
-            'A': ['']*total_pages,
-            'B': ['']*total_pages,
-            'C': ['']*total_pages,
-            'D': ['']*total_pages
+            'Cases': ['']*total_pages,
+            'Goods': ['']*total_pages,
+            'Price': ['']*total_pages,
+            'Total': ['']*total_pages,
+            'Comments': ['']*total_pages,
         }
         result_dict = st.session_state.get('result_dict',null_dict)
         st.session_state.result_dict = result_dict
