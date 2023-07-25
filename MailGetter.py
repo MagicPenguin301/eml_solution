@@ -64,6 +64,7 @@ def extract_metadata(path):
         raw_email = fhdl.read()
     ep = eml_parser.EmlParser()
     parsed_eml = ep.decode_email_bytes(raw_email)["header"]
+    st.write(parsed_eml)
     return {"from":parsed_eml['from'],"to":parsed_eml['to'][0] if len(parsed_eml['to'])==1 else parsed_eml['to'], "date":parsed_eml['date']}
 
 def read_eml(path):
