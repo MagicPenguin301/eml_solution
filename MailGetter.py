@@ -1,6 +1,7 @@
 import eml_parser
 import email
 import re
+import streamlit as st
 
 def extract_text_from_eml(eml_path):
     with open(eml_path, 'r', encoding='utf-8') as eml_file:
