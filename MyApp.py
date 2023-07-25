@@ -25,7 +25,8 @@ def mail_dict_from_zip(uploaded_zip):
             # 获取ZIP文件中的文件列表
             file_list = zip_ref.namelist()
             # 解压缩文件到临时目录
-            os.makedirs(save_folder)
+            if not os.path.exists(save_folder):
+                os.makedirs(save_folder)
             zip_ref.extractall(save_folder)
         possible_mails = []
         mail_dict = {}
@@ -47,6 +48,7 @@ def mail_dict_from_zip(uploaded_zip):
                 possible_mails.append(i+1)
         st.write(f'``以下页码可能比较重要:\n {possible_mails}``')
         shutil.rmtree(save_folder)
+        os.rmdir(save_folder)
         return mail_dict, sorted_name_list
 
 def render_columns(mail_dict):
