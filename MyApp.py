@@ -6,6 +6,7 @@ import MailProcesser
 import shutil
 import pandas as pd
 import re
+import tempfile
 
 
 def find_prices_and_cases(text):
@@ -19,21 +20,19 @@ def find_prices_and_cases(text):
     return price_count, cases_count
 @st.cache_data
 def mail_dict_from_zip(uploaded_zip):
-    save_folder = '_save_folder'
     if uploaded_zip is not None:
         with zipfile.ZipFile(uploaded_zip, "r", metadata_encoding='gbk') as zip_ref:
             # 获取ZIP文件中的文件列表
             file_list = zip_ref.namelist()
             # 解压缩文件到临时目录
-            if not os.path.exists(save_folder):
-                os.makedirs(save_folder)
-            zip_ref.extractall(save_folder)
+            temp_dir = tempfile.mkdtemp()
+            zip_ref.extractall(temp_dir)
         possible_mails = []
         mail_dict = {}
         meta_mails = []
         for name in zip_ref.namelist():
             if name.lower().endswith('.eml'):
-                path = os.path.join(save_folder, name)
+                path = os.path.join(temp_dir, name)
                 metamail = MailGetter.read_eml(path)
                 metamail[0]['file_name'] = name
                 meta_mails.append((metamail[0],f'{metamail[1]}'))
@@ -47,8 +46,7 @@ def mail_dict_from_zip(uploaded_zip):
             if find_prices_and_cases(text)[0]+find_prices_and_cases(text)[1]>=2:
                 possible_mails.append(i+1)
         st.write(f'``以下页码可能比较重要:\n {possible_mails}``')
-        shutil.rmtree(save_folder)
-        os.rmdir(save_folder)
+        shutil.rmtree(temp_dir)
         return mail_dict, sorted_name_list
 
 def render_columns(mail_dict):
