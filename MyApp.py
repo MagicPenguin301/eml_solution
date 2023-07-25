@@ -1,7 +1,6 @@
 import os
 import zipfile
 import streamlit as st
-import tempfile
 import MailGetter
 import MailProcesser
 import shutil
@@ -20,19 +19,20 @@ def find_prices_and_cases(text):
     return price_count, cases_count
 @st.cache_data
 def mail_dict_from_zip(uploaded_zip):
+    save_folder = 'save_folder'
     if uploaded_zip is not None:
         with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
             # 获取ZIP文件中的文件列表
             file_list = zip_ref.namelist()
             # 解压缩文件到临时目录
-            temp_dir = tempfile.mkdtemp()
-            zip_ref.extractall("\\\\?\\"+temp_dir)
+            os.makedirs(save_folder)
+            zip_ref.extractall(save_folder)
         possible_mails = []
         mail_dict = {}
         meta_mails = []
         for name in zip_ref.namelist():
             if name.lower().endswith('.eml'):
-                path = os.path.join(temp_dir, name)
+                path = os.path.join(save_folder, name)
                 metamail = MailGetter.read_eml(path)
                 metamail[0]['file_name'] = name
                 meta_mails.append((metamail[0],f'{metamail[1]}'))
@@ -46,7 +46,7 @@ def mail_dict_from_zip(uploaded_zip):
             if find_prices_and_cases(text)[0]+find_prices_and_cases(text)[1]>=2:
                 possible_mails.append(i+1)
         st.write(f'``以下页码可能比较重要:\n {possible_mails}``')
-        shutil.rmtree(temp_dir)
+        shutil.rmtree(save_folder)
         return mail_dict, sorted_name_list
 
 def render_columns(mail_dict):
@@ -80,27 +80,26 @@ def render_page_btn(total_pages,key):
 
 def check_downloadable(total_pages):
     if True:
-        if st.button("下载目前的进度"):
+        if st.button("点击下载目前的进度"):
             # 将 ABCD 四个值保存到 CSV 文件中
             df = pd.DataFrame(st.session_state.result_dict)
             st.dataframe(df)
             st.download_button(
                 label="点击下载CSV文件",
-                data=df.to_csv(index=False),
+                data=df.to_csv("ABCD_values.csv",index=False,encoding='utf-8'),
                 file_name="ABCD_values.csv",
                 mime="text/csv")
         if st.button("清除所有记录"):
             st.session_state.result_dict = {
             'File Name': [''] * total_pages,
-            'Cases': ['']*total_pages,
-            'Goods': ['']*total_pages,
-            'Price': ['']*total_pages,
-            'Total': ['']*total_pages,
-            'Comments': ['']*total_pages,
+            'A': ['']*total_pages,
+            'B': ['']*total_pages,
+            'C': ['']*total_pages,
+            'D': ['']*total_pages
         }
 
 def main():
-    st.title("在线批量浏览EML文件并导出笔记")
+    st.title("在线解压并处理ZIP文件")
     uploaded_file = st.file_uploader("请选择要上传的ZIP文件", type=["zip"])
     if uploaded_file is not None:
         mail_dict,sorted_name_list = mail_dict_from_zip(uploaded_file)
@@ -110,11 +109,10 @@ def main():
         st.session_state.current_page = current_page
         null_dict = {
             'File Name':sorted_name_list,
-            'Cases': ['']*total_pages,
-            'Goods': ['']*total_pages,
-            'Price': ['']*total_pages,
-            'Total': ['']*total_pages,
-            'Comments': ['']*total_pages,
+            'A': ['']*total_pages,
+            'B': ['']*total_pages,
+            'C': ['']*total_pages,
+            'D': ['']*total_pages
         }
         result_dict = st.session_state.get('result_dict',null_dict)
         st.session_state.result_dict = result_dict
