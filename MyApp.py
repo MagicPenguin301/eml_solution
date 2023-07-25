@@ -19,7 +19,7 @@ def find_prices_and_cases(text):
     return price_count, cases_count
 @st.cache_data
 def mail_dict_from_zip(uploaded_zip):
-    save_folder = 'save_folder'
+    save_folder = '_save_folder'
     if uploaded_zip is not None:
         with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
             # 获取ZIP文件中的文件列表
