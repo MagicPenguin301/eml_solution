@@ -26,7 +26,7 @@ def mail_dict_from_zip(uploaded_zip):
             file_list = zip_ref.namelist()
             # 解压缩文件到临时目录
             temp_dir = tempfile.mkdtemp()
-            zip_ref.extractall("\\?\" + temp_dir)
+            zip_ref.extractall("\\\\?\\"+temp_dir)
         possible_mails = []
         mail_dict = {}
         meta_mails = []
