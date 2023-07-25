@@ -21,7 +21,7 @@ def find_prices_and_cases(text):
 def mail_dict_from_zip(uploaded_zip):
     save_folder = '_save_folder'
     if uploaded_zip is not None:
-        with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
+        with zipfile.ZipFile(uploaded_zip, "r", metadata_encoding='utf-8') as zip_ref:
             # 获取ZIP文件中的文件列表
             file_list = zip_ref.namelist()
             # 解压缩文件到临时目录
